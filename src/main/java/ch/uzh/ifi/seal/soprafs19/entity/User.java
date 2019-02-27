@@ -1,8 +1,11 @@
 package ch.uzh.ifi.seal.soprafs19.entity;
 
 import ch.uzh.ifi.seal.soprafs19.constant.UserStatus;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +14,6 @@ import javax.persistence.Id;
 
 @Entity
 public class User implements Serializable {
-	
 
 	private static final long serialVersionUID = 1L;
 
@@ -19,9 +21,12 @@ public class User implements Serializable {
 	@GeneratedValue
 	private Long id;
 	
-	@Column(nullable = false) 
+	@Column(nullable = false)
 	private String name;
-	
+
+	@Column(nullable = false)
+	private String password;
+
 	@Column(nullable = false, unique = true) 
 	private String username;
 	
@@ -30,6 +35,10 @@ public class User implements Serializable {
 
 	@Column(nullable = false)
 	private UserStatus status;
+
+	@Column(nullable = false)
+	private Date creationDate;
+
 
 	public Long getId() {
 		return id;
@@ -47,6 +56,10 @@ public class User implements Serializable {
 		this.name = name;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -54,6 +67,12 @@ public class User implements Serializable {
 	public void setUsername(String username) {
 		this.username = username;
 	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
 
 	public String getToken() {
 		return token;
@@ -67,9 +86,19 @@ public class User implements Serializable {
 		return status;
 	}
 
+	public Date getDate() {
+		return creationDate;
+	}
+
 	public void setStatus(UserStatus status) {
 		this.status = status;
 	}
+
+	public void setDate(Date registerDate){
+		this.creationDate = registerDate;
+	}
+
+
 
 	@Override
 	public boolean equals(Object o) {
