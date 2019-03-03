@@ -1,8 +1,9 @@
 package ch.uzh.ifi.seal.soprafs19.service;
-
+import ch.uzh.ifi.seal.soprafs19.exception.UserAlreadyExists;
+import ch.uzh.ifi.seal.soprafs19.repository.UserRepository;
 import ch.uzh.ifi.seal.soprafs19.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs19.entity.User;
-import ch.uzh.ifi.seal.soprafs19.repository.UserRepository;
+import ch.uzh.ifi.seal.soprafs19.exception.UserNotFound;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.catalina.connector.Response;
 import org.slf4j.Logger;
@@ -37,26 +38,32 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    public ResponseEntity<User> createUser(User newUser) {
+
+
+    public ResponseEntity<User> createUser(User newUser) throws UserAlreadyExists {
         Optional<User> newName = userRepository.findByUsername(newUser.getUsername());
         if(newName.isPresent()){
-            return ResponseEntity.notFound().build();
+
+            throw new UserAlreadyExists("Following username is already given" + newName.get().getUsername());
+            //return ResponseEntity.notFound().build();
         }
         newUser.setToken(UUID.randomUUID().toString());
-        newUser.setStatus(UserStatus.ONLINE);
+
+        newUser.setStatus(UserStatus.OFFLINE); // users need to login after first registration
         newUser.setDate(new Date());
         userRepository.save(newUser);
-        return ResponseEntity.ok(newUser);
+        return ResponseEntity.ok().body(newUser);
     }
 
 
-    public ResponseEntity<User> authenticateUser(User possibleUser) {
-        Optional<User> potentialUser = userRepository.findByUsername(possibleUser.getUsername());
-        if(potentialUser.isPresent()) {
-            if(potentialUser.get().getPassword().equals(possibleUser.getPassword())) {
-                return ResponseEntity.ok(potentialUser.get());
-            }
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<User> showUser(Long id) throws UserNotFound {
+        return ResponseEntity.ok().body(userRepository.findById(id).orElseThrow(() -> new UserNotFound("User with following ID not found:" + id)));
+    }
+
+
+    public ResponseEntity<User> authenticateUser(User possibleUser) throws UserNotFound {
+        User potentialUser = userRepository.findByUsername(possibleUser.getUsername()).orElseThrow(() -> new UserNotFound("User with following username not found : " + possibleUser.getUsername()));
+        potentialUser.setStatus(UserStatus.ONLINE);
+        return ResponseEntity.ok().body(potentialUser);
     }
 }
