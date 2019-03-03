@@ -43,7 +43,6 @@ public class UserService {
     public ResponseEntity<User> createUser(User newUser) throws UserAlreadyExists {
         Optional<User> newName = userRepository.findByUsername(newUser.getUsername());
         if(newName.isPresent()){
-
             throw new UserAlreadyExists("Following username is already given" + newName.get().getUsername());
             //return ResponseEntity.notFound().build();
         }
