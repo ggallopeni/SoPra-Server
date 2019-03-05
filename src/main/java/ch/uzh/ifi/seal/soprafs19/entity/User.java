@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs19.entity;
-
+import java.text.SimpleDateFormat;
 import ch.uzh.ifi.seal.soprafs19.constant.UserStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -36,17 +37,22 @@ public class User implements Serializable {
 	@Column(nullable = false)
 	private UserStatus status;
 
+	@DateTimeFormat(pattern = "dd/MM/yyyy hh:mm:ss")
 	@Column(nullable = false)
 	private Date creationDate;
+
+
+	@Column(nullable = false)
+	//@DateTimeFormat(pattern = "dd/MM/yyyy")
+	@JsonFormat(pattern = "dd/MM/yyyy")
+	private Date birthday;
 
 
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+	public void setId(Long id) { this.id = id; }
 
 	public String getName() {
 		return name;
@@ -86,6 +92,10 @@ public class User implements Serializable {
 		return status;
 	}
 
+	public Date getBirthday() {
+		return birthday;
+	}
+
 	public Date getDate() {
 		return creationDate;
 	}
@@ -96,6 +106,10 @@ public class User implements Serializable {
 
 	public void setDate(Date registerDate){
 		this.creationDate = registerDate;
+	}
+
+	public void setBirthday(Date registerBirthday){
+		this.birthday = registerBirthday;
 	}
 
 

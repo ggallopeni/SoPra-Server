@@ -20,6 +20,14 @@ public class UserController {
         this.service = service;
     }
 
+    @RequestMapping(method = RequestMethod.PUT, value = "/users/{userId}")
+    public ResponseEntity<User> updateUsers(@PathVariable Long userId, @RequestBody User possibleUser) throws UserNotFound{
+        if(userId.equals(possibleUser.getId()) ){
+            return this.service.updateUser(possibleUser);
+        }
+        throw new UserNotFound("user ID does not map.");
+    }
+
     @GetMapping("/users")
     Iterable<User> all() {
         return service.getUsers();

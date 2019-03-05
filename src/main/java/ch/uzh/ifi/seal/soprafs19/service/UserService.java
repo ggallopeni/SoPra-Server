@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,7 +39,14 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-
+    public ResponseEntity<User> updateUser(User updatedUser) throws UserNotFound{
+        Optional<User> opUpdatedUser = userRepository.findById(updatedUser.getId());
+        if(opUpdatedUser.isPresent()){
+            userRepository.save(updatedUser);
+            return ResponseEntity.ok().body(updatedUser);
+        }
+        throw new UserNotFound("User with given ID was not found.");
+    }
 
     public ResponseEntity<User> createUser(User newUser) throws UserAlreadyExists {
         Optional<User> newName = userRepository.findByUsername(newUser.getUsername());
@@ -47,7 +55,6 @@ public class UserService {
             //return ResponseEntity.notFound().build();
         }
         newUser.setToken(UUID.randomUUID().toString());
-
         newUser.setStatus(UserStatus.OFFLINE); // users need to login after first registration
         newUser.setDate(new Date());
         userRepository.save(newUser);
