@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs19.controller;
 import ch.uzh.ifi.seal.soprafs19.entity.User;
+import ch.uzh.ifi.seal.soprafs19.entity.UserDTO;
 import ch.uzh.ifi.seal.soprafs19.exception.UserAlreadyExists;
 import ch.uzh.ifi.seal.soprafs19.exception.UserNotFound;
 import ch.uzh.ifi.seal.soprafs19.service.UserService;
@@ -20,17 +21,26 @@ public class UserController {
         this.service = service;
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/users/{userId}")
+    /*@RequestMapping(method = RequestMethod.PUT, value = "/users/{userId}")
     public ResponseEntity<User> updateUsers(@PathVariable Long userId, @RequestBody User possibleUser) throws UserNotFound{
-        if(userId.equals(possibleUser.getId()) ){
-            return this.service.updateUser(possibleUser);
-        }
-        throw new UserNotFound("user ID does not map.");
-    }
+            return this.service.updateUser(possibleUser, userId);
+    }*/
 
     @GetMapping("/users")
     Iterable<User> all() {
         return service.getUsers();
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+    @RequestMapping(method = RequestMethod.PUT, value = "/users/logout/{logoutToken}")
+    public ResponseEntity setOffline(@PathVariable String logoutToken) throws UserNotFound{
+        return this.service.logout(logoutToken);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+    @RequestMapping(method = RequestMethod.PUT, value = "/users/{uID}")
+    public ResponseEntity update(@PathVariable Long uID, @RequestBody UserDTO user) throws UserNotFound{
+        return this.service.updateUser(uID, user);
     }
 
     @PostMapping("/login")
@@ -40,7 +50,7 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/users/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable Long userId) throws UserNotFound {
+    public ResponseEntity getUser(@PathVariable Long userId) throws UserNotFound {
         return this.service.showUser(userId);
     }
 

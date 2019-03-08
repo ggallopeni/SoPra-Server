@@ -1,13 +1,9 @@
 package ch.uzh.ifi.seal.soprafs19.entity;
-import java.text.SimpleDateFormat;
 import ch.uzh.ifi.seal.soprafs19.constant.UserStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.io.Serializable;
-import java.text.DateFormat;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,7 +11,6 @@ import javax.persistence.Id;
 
 @Entity
 public class User implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -28,29 +23,25 @@ public class User implements Serializable {
 	@Column(nullable = false)
 	private String password;
 
-	@Column(nullable = false, unique = true) 
+	@Column(nullable = false, unique = true)
 	private String username;
-	
-	@Column(nullable = false, unique = true) 
+
+	@Column(nullable = false, unique = true)
 	private String token;
 
 	@Column(nullable = false)
 	private UserStatus status;
 
 	@DateTimeFormat(pattern = "dd/MM/yyyy hh:mm:ss")
-	@Column(nullable = false)
+	@Column(nullable=false)
 	private Date creationDate;
-
 
 	@Column(nullable = false)
 	//@DateTimeFormat(pattern = "dd/MM/yyyy")
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private Date birthday;
 
-
-	public Long getId() {
-		return id;
-	}
+	public Long getId() { return id; }
 
 	public void setId(Long id) { this.id = id; }
 
@@ -78,15 +69,11 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-
-
 	public String getToken() {
 		return token;
 	}
 
-	public void setToken(String token) {
-		this.token = token;
-	}
+	public void setToken(String token) { this.token = token; }
 
 	public UserStatus getStatus() {
 		return status;
@@ -96,7 +83,7 @@ public class User implements Serializable {
 		return birthday;
 	}
 
-	public Date getDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
@@ -104,15 +91,13 @@ public class User implements Serializable {
 		this.status = status;
 	}
 
-	public void setDate(Date registerDate){
+	public void setCreationDate(Date registerDate){
 		this.creationDate = registerDate;
 	}
 
 	public void setBirthday(Date registerBirthday){
 		this.birthday = registerBirthday;
 	}
-
-
 
 	@Override
 	public boolean equals(Object o) {
