@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-
 @RestController
 public class UserController {
 
@@ -20,11 +18,6 @@ public class UserController {
     UserController(UserService service) {
         this.service = service;
     }
-
-    /*@RequestMapping(method = RequestMethod.PUT, value = "/users/{userId}")
-    public ResponseEntity<User> updateUsers(@PathVariable Long userId, @RequestBody User possibleUser) throws UserNotFound{
-            return this.service.updateUser(possibleUser, userId);
-    }*/
 
     @GetMapping("/users")
     Iterable<User> all() {

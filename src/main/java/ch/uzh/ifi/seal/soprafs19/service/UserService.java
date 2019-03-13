@@ -7,14 +7,10 @@ import ch.uzh.ifi.seal.soprafs19.entity.User;
 import ch.uzh.ifi.seal.soprafs19.exception.UserNotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.constraints.Null;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,16 +32,6 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    /*public ResponseEntity<User> updateUser(User updatedUser, Long userId) throws UserNotFound{
-        Optional<User> opUpdatedUser = userRepository.findById(userId);
-        if(opUpdatedUser.isPresent()){
-            userRepository.save(updatedUser);
-            return ResponseEntity.ok().body(updatedUser);
-        }
-        throw new UserNotFound("UserService-FAIL: User with given ID was not found.");
-    }*/
-
-
     public ResponseEntity logout(String logoutToken) throws UserNotFound {
         Optional<User> opLogoutUser = userRepository.findByToken(logoutToken);
         if(opLogoutUser.isPresent()){
@@ -55,7 +41,6 @@ public class UserService {
         }
         throw new UserNotFound("Logout user failed: token not found.");
     }
-
 
     public ResponseEntity<User> createUser(User newUser) throws UserAlreadyExists {
         Optional<User> newName = userRepository.findByUsername(newUser.getUsername());
@@ -87,7 +72,7 @@ public class UserService {
             userRepository.save(user2Update.get());
             return ResponseEntity.ok("");
         }
-        throw new UserNotFound("Failed to update user in Service: user not present");
+        throw new UserNotFound("Failed to update user in Service: user not present. See ID:   " + uID);
     }
 
 
@@ -98,7 +83,10 @@ public class UserService {
 
     public ResponseEntity<User> authenticateUser(User possibleUser) throws UserNotFound {
         User potentialUser = userRepository.findByUsername(possibleUser.getUsername()).orElseThrow(() -> new UserNotFound("User with following username not found : " + possibleUser.getUsername()));
+        if (potentialUser.getPassword().equals(possibleUser.getPassword())){
         potentialUser.setStatus(UserStatus.ONLINE);
         return ResponseEntity.ok().body(potentialUser);
+        }
+        throw new UserNotFound("Password does not match.");
     }
 }
