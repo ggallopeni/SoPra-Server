@@ -45,7 +45,7 @@ public class UserService {
     public ResponseEntity<User> createUser(User newUser) throws UserAlreadyExists {
         Optional<User> newName = userRepository.findByUsername(newUser.getUsername());
         if(newName.isPresent()){
-            throw new UserAlreadyExists("Following username is already given" + newName.get().getUsername());
+            throw new UserAlreadyExists("Following username is already given:   " + newName.get().getUsername());
 
         }
         newUser.setToken(UUID.randomUUID().toString());
@@ -72,17 +72,17 @@ public class UserService {
             userRepository.save(user2Update.get());
             return ResponseEntity.ok("");
         }
-        throw new UserNotFound("Failed to update user in Service: user not present. See ID:   " + uID);
+        throw new UserNotFound("Failed to update user in Service. User with following ID was not found:   " + uID);
     }
 
 
     public ResponseEntity<User> showUser(Long id) throws UserNotFound {
-        return ResponseEntity.ok().body(userRepository.findById(id).orElseThrow(() -> new UserNotFound("User with following ID not found:" + id)));
+        return ResponseEntity.ok().body(userRepository.findById(id).orElseThrow(() -> new UserNotFound("User with following ID not found:  " + id)));
     }
 
 
     public ResponseEntity<User> authenticateUser(User possibleUser) throws UserNotFound {
-        User potentialUser = userRepository.findByUsername(possibleUser.getUsername()).orElseThrow(() -> new UserNotFound("User with following username not found : " + possibleUser.getUsername()));
+        User potentialUser = userRepository.findByUsername(possibleUser.getUsername()).orElseThrow(() -> new UserNotFound("User with following username not found: " + possibleUser.getUsername()));
         if (potentialUser.getPassword().equals(possibleUser.getPassword())){
         potentialUser.setStatus(UserStatus.ONLINE);
         return ResponseEntity.ok().body(potentialUser);

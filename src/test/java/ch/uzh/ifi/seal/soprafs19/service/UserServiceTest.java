@@ -37,6 +37,7 @@ public class UserServiceTest {
     @Autowired
     private UserService userService;
 
+    /** This test covers the POST API**/
     @Test(expected = UserAlreadyExists.class)
     public void createUser() throws UserAlreadyExists {
         User testUser = new User();
@@ -67,6 +68,7 @@ public class UserServiceTest {
     }
 
 
+    /** This test covers the PUT API**/
     @Test(expected = UserNotFound.class)
     public void updateUser() throws UserNotFound, UserAlreadyExists {
         //User to be changed
@@ -84,7 +86,6 @@ public class UserServiceTest {
         newUser.setName("newTestName");
         newUser.setPassword("newTestPw");
 
-
         ResponseEntity updatedUser = userService.updateUser(testUser.getId(), newUser);
 
         //check whether names got changed
@@ -95,18 +96,33 @@ public class UserServiceTest {
         //check whether status is right
         Assert.assertEquals(200, updatedUser.getStatusCodeValue());
 
-
         //Case: user id not found
         Long inexistent = 999L;
         //ResponseEntity inexistentUser = userService.updateUser(inexistent, newUser);
 
-
         Assert.assertEquals(404, userService.updateUser(inexistent, newUser).getStatusCodeValue());
     }
 
-    /*@Test(expected = UserNotFound.class)
-    public void testUserNotFound(){
-        Long inexistent = 999L;
-        userService.updateUser(inexistent, newUser);
-    }*/
+
+    /** This test covers the GET API**/
+    @Test(expected = UserNotFound.class)
+    public void getUser() throws UserAlreadyExists, UserNotFound{
+        //Create a user
+        User testUser = new User();
+        testUser.setName("testName");
+        testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setBirthday(new Date());
+
+        ResponseEntity<User> effectiveUser = userService.createUser(testUser);
+
+        ResponseEntity<User> getUser = userService.showUser(testUser.getId());
+
+        //happy path: user exists and gets shown correctly
+        Assert.assertEquals("show user not found by id:   " + testUser.getId(), 200, getUser.getStatusCodeValue());
+
+        //case "user not found by ID"
+        Assert.assertEquals("user to be shown not found (404 expexted), ID:   " + testUser.getId(), 404, userService.showUser(999L).getStatusCodeValue());
+
+    }
 }
